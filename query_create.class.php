@@ -288,7 +288,18 @@ class CreateQuery{
 	 * @access private
 	 */
 	private function rewrite_key(){
-		$this->_query = preg_replace_callback('/,\\s*(KEY|INDEX)\\s*(\\w+)?\\s*(\(.*?\))/im', array($this, '_rewrite_key'), $this->_query);
+		//
+		// Tested on:
+		// CREATE TABLE wp_comments (
+		//   comment_ID integer,
+		//   KEY comment_parent (comment_parent),
+		//   KEY comment_author_email (comment_author_email(10)),
+		//   KEY comment_author_email (comment_author_email(10), other_key(10)),
+		//   KEY team2 (team2),
+		//   KEY game_id (game_id, screenshot)
+		// )
+		//
+		$this->_query = preg_replace_callback('/,\\s*(KEY|INDEX)\\s*(\\w+)?\\s*(\(.*\))/im', array($this, '_rewrite_key'), $this->_query);
 	}
 	/**
 	 * Callback method for rewrite_key.
